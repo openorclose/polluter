@@ -8,6 +8,9 @@
         #game {
             display: none;
         }
+        .action {
+            passing: 20px;
+        }
     </style>
 </head>
 <body>
@@ -96,7 +99,7 @@
         const a = create("a", {innerText: action, href: "#"});
         const span = create("span", {innerText: randomlyPick(rebuttals).replace("%", times)});
         a.addEventListener("click", listener);
-        const div = create("div", {id: action}, a, span);
+        const div = create("div", {id: action, className: "action"}, a, create("br"), span);
         getById(action).replaceWith(div);
     }
     Object.keys(actions).forEach(action => {
