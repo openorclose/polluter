@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Environment Polluter</title>
+    <style>
+        #game {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div id="prologue">
+    Do you ever wander into a restaurant begging for a straw to no avail?<br>
+    As if your lone straw melted icebergs?<br>
+    Is it your only dream in the world to pollute the environment?<br>
+    Only to be stopped by those pesky advocates preaching on and on about saving Gaia?<br>
+    Or do you honestly want to save the environment?<br>
+    But there are three aunties six grandmothers who will complain if you do not burn paper as offerings?<br>
+    <br>
+    Do not fear. <br>
+    <br>
+    For in the land of the free.<br>
+    You are free.<br>
+    <br>
+    The world is yours to destroy.<br>
+    <br>
+    Enjoy.<br>
+    <br>
+    <a id = "proceed" href="#">Proceed?</a>
+</div>
+<div id="game" >
+
+</div>
+
+<script>
+    const getById = document.getElementById.bind(document);
+    function create(tag, properties = {}, ...children) {
+        const element = document.createElement(tag);
+        for (const [key, value] of Object.entries(properties)) {
+            element[key] = value
+        }
+        children.forEach(element.appendChild, element);
+        return element
+    }
+    const hasClickedProceed = localStorage.getItem("proceed") !== null;
+    if (hasClickedProceed) {
+        getById("prologue").style.display = "none";
+        getById("game").style.display = "block";
+    } else {
+        getById("proceed").addEventListener("click", () => {
+            localStorage.setItem("proceed", "1");
+            getById("prologue").style.display = "none";
+            getById("game").style.display = "block";
+        })
+    }
+    let actions = JSON.parse(localStorage.getItem("data"));
+    if (actions === null) {
+        actions = {
+            ["use a plastic straw"]: {
+                times: 0,
+                rebuttals: [
+                    "You have deprived % turtle(s) of their drinking implements.",
+                    "Now % fewer team(s) can create a successful egg-dropping-without-cracking device."
+                ]
+            },
+            ["dabao a coffee in a plastic cup"]: {
+                times: 0,
+                rebuttals: [
+                    "You have increased the workload of cleaners by % times the weight of a cup.",
+                    "The fragrant coffees you constantly bring into non-designated eating areas have distracted your neighbours for % hour(s)."
+                ]
+            },
+            ["burn joss paper for your ancestors"]: {
+                times: 0,
+                rebuttals: [
+                    "Inflation rates have gone up %000 percent. Your past offerings are worth nothing. Unfilial.",
+                    "Jealous of your constant filialness, your forefathers suffer the wrath of % lost soul(s)."
+                ]
+            }
+        }
+    }
+    const gameDiv = document.getElementById('game');
+    function randomlyPick(array) {
+        return array[Math.floor(Math.random() * array.length)]
+    }
+    function listener({target: {innerText}}) {
+        actions[innerText].times += 1;
+        localStorage.setItem("data", JSON.stringify(actions));
+        reload(innerText);
+        event.stopPropagation();
+    }
+    function reload(action) {
+        const {times, rebuttals} = actions[action];
+        const a = create("a", {innerText: action, href: "#"});
+        const span = create("span", {innerText: randomlyPick(rebuttals).replace("%", times)});
+        a.addEventListener("click", listener);
+        const div = create("div", {id: action}, a, span);
+        getById(action).replaceWith(div);
+    }
+    Object.keys(actions).forEach(action => {
+        gameDiv.appendChild(create("div", {id: action}));
+        reload(action);
+    });
+</script>
+</body>
+</html>
